@@ -1,0 +1,31 @@
+name: Schedule Instagram Post
+
+on:
+  schedule:
+    # Runs at 9:00 AM UTC every day (adjust to your timezone)
+    - cron: '	0 */6 * * *'
+  workflow_dispatch: # Allows manual trigger for testing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Run publish script
+        env:
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+          INSTAGRAM_ACCESS_TOKEN: ${{ secrets.INSTAGRAM_ACCESS_TOKEN }}
+          IMAGE_URL: ${{ secrets.IMAGE_URL }}
+          CAPTION: "Daily post from GitHub Actions!"
+        run: python publish_post.py
